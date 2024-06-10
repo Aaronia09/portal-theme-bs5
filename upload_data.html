@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block upload_menu %}active{% endblock upload_menu %}
+{% block main %}
+<div class="row">
+    <div class="col-6 mx-auto shadow bg-light p-3 rounded">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group mb-4">
+                <span for="file1">Rapport</span>
+                <input type="file" name="file1" id="file1" class="form-control" required>
+            </div>
+            <div class="form-group mb-4">
+                <span for="file2">Production</span>
+                <input type="file" name="file2" id="file2" class="form-control" required>
+            </div>
+            <div class="form-group mb-4">
+                <span for="file3">...</span>
+                <input type="file" name="file3" id="file3" class="form-control" required>
+            </div>
+            <div class="form-group row mb-4">
+                <div class="col-6">
+                    <input type="text" name="campagne" id="campagne" class="form-control" placeholder="Campagne" required>
+                </div>
+                <div class="col-6">
+                    <input type="text" name="pays" id="pays" class="form-control" placeholder="Pays" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="reset" class="btn btn-danger text-white">Effacer</button>
+                <button type="submit" class="btn btn-success text-white">Soumettre</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main %}

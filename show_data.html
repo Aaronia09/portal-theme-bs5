@@ -1,0 +1,385 @@
+{% extends "layout.html" %}
+{% block show_menu %}active{% endblock show_menu %}
+{% block title %}Afficher les données{% endblock title %}
+{% block main %}
+<div class="row g-3 mb-4 align-items-center justify-content-between">
+    <div class="col-auto">
+        <h1 class="app-page-title mb-0">Affichage des données</h1>
+    </div>
+    <div class="col-auto">
+        <div class="page-utilities">
+            <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+                <div class="col-auto">
+                    <div class="table-search-form row gx-1 align-items-center">
+                        <div class="col-auto">
+                            <input type="text" id="searchInput" name="searchorders" class="form-control search-orders"
+                                placeholder="Rechercher...">
+                        </div>
+                        <div class="col-auto">
+                            <button type="button"  id="searchButton" class="btn app-btn-secondary">Rechercher</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-auto d-none">
+
+                    <select class="form-select w-auto">
+                        <option selected value="option-1">All</option>
+                        <option value="option-2">This week</option>
+                        <option value="option-3">This month</option>
+                        <option value="option-4">Last 3 months</option>
+
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <a class="btn app-btn-secondary" href="{% url 'download_excel' %}">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download me-1"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                            <path fill-rule="evenodd"
+                                d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                        </svg>
+                        Download CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-2">
+        <h5>Campagnes</h5>
+    </div>
+    <div class="col-lg-3">
+        <select name="campagnes" id="campagnes" class="form-control form-select">
+            <option disabled>Sélectionnez une campagne</option>
+            <option value="all" selected>Toutes les campagnes</option>
+            {% for campagne in campagnes %}
+            <option value="{{ campagne.id }}">{{ campagne.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<br><br>
+
+<nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
+    <a class="flex-sm-fill text-sm-center nav-link active" id="show-all-tab" data-bs-toggle="tab" href="#show-all"
+        role="tab" aria-controls="show-all" aria-selected="true">Tout</a>
+    <a class="flex-sm-fill text-sm-center nav-link" id="show-firsts-tab" data-bs-toggle="tab" href="#show-firsts"
+        role="tab" aria-controls="show-firsts" aria-selected="false">Les 5 premiers</a>
+    <a class="flex-sm-fill text-sm-center nav-link" id="show-lasts-tab" data-bs-toggle="tab" href="#show-lasts"
+        role="tab" aria-controls="show-lasts" aria-selected="false">Les 5 derniers</a>
+</nav>
+
+
+<div class="tab-content" id="orders-table-tab-content">
+    <div class="tab-pane fade show active" id="show-all" role="tabpanel" aria-labelledby="show-all-tab">
+        <div class="app-card app-card-orders-table shadow-sm mb-5">
+            <div class="app-card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 text-left" id="tableBody">
+                        <thead>
+                            <tr>
+                            <th class="cell">ID</th>
+                            <th class="cell">Agent</th>
+                            <th class="cell">Nb Argu</th>
+                            <th class="cell">Temps traitement digital</th>
+                            <th class="cell">Réalisation</th>
+                            <th class="cell">Traités digital +voix</th>
+                            <th class="cell">Heure à payer RA</th>
+                            <th class="cell">Heure à payer Total</th>
+                            <th class="cell">SPH</th>
+                            <th class="cell">TMT</th>
+                            <th class="cell">Date</th>
+                            <th class="cell">Pays</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for extraction in allEx %}
+                            <tr>
+                                <td class="cell">#{{ extraction.id_agent }}</td>
+                                <td class="cell"><span class="truncate">{{ extraction.agent }}</span></td>
+                                <td class="cell">{{ extraction.datas.nb_argu }}</td>
+                                <td class="cell">{{ extraction.datas.heure}}</td>
+                                <td class="cell">{{ extraction.datas.nb_req }}</td>
+                                <td class="cell">{{ extraction.datas.traite_voix }}</td>
+                                <td class="cell">{{ extraction.datas.heure_paye }}</td>
+                                <td class="cell">{{ extraction.datas.heure_total }}</td>
+                                <td class="cell">{{ extraction.datas.SPH }}</td>
+                                <td class="cell">{{ extraction.datas.TMT }}</td>
+                                <td class="cell">{{ extraction.datas.opDate }}</td>
+                                <td class="cell">{{ extraction.pays }}</td>
+                            </tr>
+                            {% comment %} # inh comment ça {% endcomment %}
+                            {% comment %} # Vas sur "http://localhost:8000/admin/index/extraction/231/change/" roni ==> casanova pour les identifiants {% endcomment %}
+
+                            {% empty %}
+                            <tr>
+                                <td class="cell" colspan="11">
+                                    <h5 class="text-center fw-light">
+                                        Aucune donnée
+                                    </h5>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <nav class="app-pagination d-none">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+
+    <div class="tab-pane fade" id="show-firsts" role="tabpanel" aria-labelledby="show-firsts-tab">
+        <div class="app-card app-card-orders-table mb-5">
+            <div class="app-card-body">
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0 text-left">
+                        <thead>
+                            <tr>
+                                <th class="cell">ID</th>
+                                <th class="cell">Agent</th>
+                                <th class="cell">Nb Argu</th>
+                                <th class="cell">Temps traitement digital</th>
+                                <th class="cell">Réalisation</th>
+                                <th class="cell">Traités digital +voix</th>
+                                <th class="cell">Heure à payer RA</th>
+                                <th class="cell">Heure à payer Total</th>
+                                <th class="cell">SPH</th>
+                                <th class="cell">TMT</th>
+                                <th class="cell">Date</th>
+                                <th class="cell">Pays</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for extraction in firstEx %}
+                            <tr>
+                                <td class="cell">#{{ extraction.id_agent }}</td>
+                                <td class="cell"><span class="truncate">{{ extraction.agent }}</span></td>
+                                <td class="cell">{{ extraction.datas.nb_argu }}</td>
+                                <td class="cell">{{ extraction.datas.heure}}</td>
+                                <td class="cell">{{ extraction.datas.nb_req }}</td>
+                                <td class="cell">{{ extraction.datas.traite_voix }}</td>
+                                <td class="cell">{{ extraction.datas.heure_paye }}</td>
+                                <td class="cell">{{ extraction.datas.heure_total }}</td>
+                                <td class="cell">{{ extraction.datas.SPH }}</td>
+                                <td class="cell">{{ extraction.datas.TMT }}</td>
+                                <td class="cell">{{ extraction.datas.opDate }}</td>
+                                <td class="cell">{{ extraction.pays }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td class="cell" colspan="11">
+                                    <h5 class="text-center fw-light">
+                                        Aucune donnée
+                                    </h5>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="show-lasts" role="tabpanel" aria-labelledby="show-lasts-tab">
+        <div class="app-card app-card-orders-table mb-5">
+            <div class="app-card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 text-left">
+                        <thead>
+                            <tr>
+                                <th class="cell">ID</th>
+                                <th class="cell">Agent</th>
+                                <th class="cell">Nb Argu</th>
+                                <th class="cell">Temps traitement digital</th>
+                                <th class="cell">Réalisation</th>
+                                <th class="cell">Traités digital +voix</th>
+                                <th class="cell">Heure à payer RA</th>
+                                <th class="cell">Heure à payer Total</th>
+                                <th class="cell">SPH</th>
+                                <th class="cell">TMT</th>
+                                <th class="cell">Date</th>
+                                <th class="cell">Pays</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for extraction in lastEx %}
+                            <tr>
+                                <td class="cell">#{{ extraction.id_agent }}</td>
+                                <td class="cell"><span class="truncate">{{ extraction.agent }}</span></td>
+                                <td class="cell">{{ extraction.datas.nb_argu }}</td>
+                                <td class="cell">{{ extraction.datas.heure}}</td>
+                                <td class="cell">{{ extraction.datas.nb_req }}</td>
+                                <td class="cell">{{ extraction.datas.traite_voix }}</td>
+                                <td class="cell">{{ extraction.datas.heure_paye }}</td>
+                                <td class="cell">{{ extraction.datas.heure_total }}</td>
+                                <td class="cell">{{ extraction.datas.SPH }}</td>
+                                <td class="cell">{{ extraction.datas.TMT }}</td>
+                                <td class="cell">{{ extraction.datas.opDate }}</td>
+                                <td class="cell">{{ extraction.pays }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td class="cell" colspan="11">
+                                    <h5 class="text-center fw-light">
+                                        Aucune donnée
+                                    </h5>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+const SEARCH_BUTTON_ID = "searchButton";
+const SEARCH_INPUT_ID = "searchInput";
+const TABLE_BODY_ID = "tableBody";
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  document.getElementById(SEARCH_BUTTON_ID).addEventListener("click", function () {
+    filterTable();
+  });
+
+  document.getElementById(SEARCH_INPUT_ID).addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+      filterTable();
+    }
+  });
+
+  function filterTable() {
+    var input = document.getElementById(SEARCH_INPUT_ID);
+    var filter = input.value.toLowerCase();
+
+    var table = document.getElementById(TABLE_BODY_ID);
+    table.querySelectorAll('tr').forEach(function(tr) {
+      var td = tr.querySelectorAll('td');
+
+      for (var j = 0; j < td.length; j++) {
+        if (td[j]) {
+          var txtValue = td[j].textContent;
+          if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            tr.style.display = "";
+            break
+          } else {
+            tr.style.display = "none";
+          }
+        }
+      }
+    });
+  }
+});
+
+</script>
+<script>
+    function fillTable(data) {
+        var iter = 0;
+        $("table tbody").html("");
+        for (var i of data) {
+            $("div#show-all table tbody").append(`<tr>
+               <td class='cell'>#${i['id_agent']}</td>
+                <td class='cell'>${i['agent']}</td>
+                <td class='cell'>${i['datas']['nb_argu']}</td>
+                <td class='cell'>${i['datas']['heure']}</td>
+                <td class='cell'>${i['datas']['nb_req']}</td>
+                <td class='cell'>${i['datas']['traite_voix']}</td>
+                <td class='cell'>${i['datas']['heure_paye']}</td>
+                <td class='cell'>${i['datas']['heure_total']}</td>
+                <td class='cell'>${i['datas']['SPH']}</td>
+                <td class='cell'>${i['datas']['TMT']}</td>
+                <td class='cell'>${i['datas']['opDate']}</td>
+                <td class='cell'>${i['pays']}</td>
+            </tr>`)
+        }
+        for (var i of data) {
+            iter += 1;
+            $("div#show-firsts table tbody").append(`<tr>
+                <td class='cell'>#${i['id_agent']}</td>
+                <td class='cell'>${i['agent']}</td>
+                <td class='cell'>${i['datas']['nb_argu']}</td>
+                <td class='cell'>${i['datas']['heure']}</td>
+                <td class='cell'>${i['datas']['nb_req']}</td>
+                <td class='cell'>${i['datas']['traite_voix']}</td>
+                <td class='cell'>${i['datas']['heure_paye']}</td>
+                <td class='cell'>${i['datas']['heure_total']}</td>
+                <td class='cell'>${i['datas']['SPH']}</td>
+                <td class='cell'>${i['datas']['TMT']}</td>
+                <td class='cell'>${i['datas']['opDate']}</td>
+                <td class='cell'>${i['pays']}</td>
+            </tr>`)
+            if (iter == 5) {
+                iter = 0
+                break;
+            }
+        }
+        for (var i of data) {
+            iter += 1;
+            if (iter >= (data.length - 4)) {
+            $("div#show-lasts table tbody").append(`<tr>
+               <td class='cell'>#${i['id_agent']}</td>
+                <td class='cell'>${i['agent']}</td>
+                <td class='cell'>${i['datas']['nb_argu']}</td>
+                <td class='cell'>${i['datas']['heure']}</td>
+                <td class='cell'>${i['datas']['nb_req']}</td>
+                <td class='cell'>${i['datas']['traite_voix']}</td>
+                <td class='cell'>${i['datas']['heure_paye']}</td>
+                <td class='cell'>${i['datas']['heure_total']}</td>
+                <td class='cell'>${i['datas']['SPH']}</td>
+                <td class='cell'>${i['datas']['TMT']}</td>
+                <td class='cell'>${i['datas']['opDate']}</td>
+                <td class='cell'>${i['pays']}</td>
+            </tr>`)
+        }
+         
+        }
+
+    }
+
+    (($) => {
+        $("select#campagnes").on({
+            "change": () => {
+                $.ajax({
+                    "url": location.origin + "/list-data/",
+                    "type": "POST",
+                    "data": { "campagne": $("select#campagnes").val() },
+                    "success": (val) => {
+                        val = val["datas"]
+                        fillTable(val);
+                    }
+                })
+            }
+        })
+    })(jQuery)
+</script>
+{% endblock scripts %}
